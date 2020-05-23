@@ -55,6 +55,7 @@ const theme = createMuiTheme({
 
 class App extends Component {
   constructor(props) {
+    super(props);
     this.onGraphSelectionChanged = this.onGraphSelectionChanged.bind(this);
     this.state = {
       selectedNode: null

@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 export default function NodeDetails(props) {
   return <Card>
           <CardContent>
-            <Typography color="textSecondary" gutterBottom>
+            <Typography gutterBottom>
               Workflow details
             </Typography>
           </CardContent>

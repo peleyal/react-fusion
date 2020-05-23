@@ -33,11 +33,14 @@ function getNodeColor(nodeType) {
 
 function createPopupMenu(graph, menu, cell, evt) {
   if (cell == null) {
-    menu.addItem('Print to console', null, function() { 
+    menu.addItem('Print', null, function() { 
       var encoder = new mxCodec();
       var node = encoder.encode(graph.getModel());
       console.log(mxUtils.getPrettyXml(node), true);
     });
+    menu.addItem('Zoom In', null, () => graph.zoomIn());
+    menu.addItem('Zoom Out', null, () => graph.zoomOut());
+    menu.addItem('Fit', null, () => graph.fit());
     
   } else {
     menu.addItem('Delete', null, function() { 

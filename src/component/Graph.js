@@ -111,6 +111,7 @@ export default class Graph extends Component {
     var parent = graph.getDefaultParent();
     graph.getModel().beginUpdate();
     try {
+      // Insert the nodes.
       var v1 = graph.insertVertex(parent, null,
         'ETL', 20, 20, 80, 30, "fillColor=" + getNodeColor("etl"));
       var v2 = graph.insertVertex(parent, null,
@@ -118,6 +119,7 @@ export default class Graph extends Component {
       var v3 = graph.insertVertex(parent, null,
         'Release', 280, 20, 80, 30,"fillColor=" + getNodeColor("release"));
 
+      // Insert the edges.
       graph.insertEdge(parent, null, '', v1, v2);
       graph.insertEdge(parent, null, '', v2, v3);
     }

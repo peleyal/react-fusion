@@ -1,0 +1,20 @@
+Some styles for the layout of the workflow window
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Committer: Eyal Peled <peleyal@peleyal-macbookpro2.roam.corp.google.com>
+#
+# On branch test
+# Your branch is up to date with 'origin/test'.
+#
+# Changes to be committed:
+#	modified:   src/WorkflowDetails.js
+#	modified:   src/component/Graph.css
+#	modified:   src/component/Graph.js
+#	modified:   src/index.js
+#	modified:   src/nodes/NodeDetails.js
+#	modified:   src/nodes/NodeEtl.js
+#	modified:   src/nodes/NodeRelease.js
+#	modified:   src/nodes/NodeValidation.js
+#	modified:   src/style.css
+#

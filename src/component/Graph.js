@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
-import ReactDOM, { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import './Graph.css';
 import {
   mxCodec,
-  mxConnectionConstraint,
   mxConnectionHandler,
-  mxConstants,
   mxClient,
-  mxEdgeStyle,
-  mxEdgeHandler,
   mxEvent,
   mxImage,
   mxGraph,
-  mxKeyHandler,
-  mxUndoManager,
   mxUtils,
-  mxToolbar,
 } from "mxgraph-js";
 
 var paletteNodes = [
@@ -28,7 +21,7 @@ var paletteNodes = [
 // https://github.com/jgraph/mxgraph/blob/e407026f5db3d40d3e39b3396dbed1b03e6f9608/javascript/examples/grapheditor/www/js/Editor.js#L469
 
 function getNodeColor(nodeType) {
-  return paletteNodes.find(n => n.type == nodeType).fillColor;
+  return paletteNodes.find(n => n.type === nodeType).fillColor;
 }
 
 function createPopupMenu(graph, menu, cell, evt) {
@@ -108,7 +101,7 @@ export default class Graph extends Component {
     }
     for (var node of nodes) {
       const element = node;
-      let ds = mxUtils.makeDraggable(
+      mxUtils.makeDraggable(
         element,
         graph,
         (graph, evt, target, x, y) =>
@@ -125,8 +118,8 @@ export default class Graph extends Component {
       var v3 = graph.insertVertex(parent, null,
         'Release', 280, 20, 80, 30,"fillColor=" + getNodeColor("release"));
 
-      var e1 = graph.insertEdge(parent, null, '', v1, v2);
-      var e2 = graph.insertEdge(parent, null, '', v2, v3);
+      graph.insertEdge(parent, null, '', v1, v2);
+      graph.insertEdge(parent, null, '', v2, v3);
     }
     finally {
         graph.getModel().endUpdate();

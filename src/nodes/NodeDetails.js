@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
@@ -13,14 +12,14 @@ export default function NodeDetails(props) {
   let details;
   if (props.selectedNode == null) {
     details = <div />
-  } else if (props.selectedNode == "ETL") {
+  } else if (props.selectedNode === "ETL") {
     details = <NodeEtl />
-  } else if (props.selectedNode == "Validation") {
+  } else if (props.selectedNode === "Validation") {
     details = <NodeValidation />
-  } else if (props.selectedNode == "Release") {
+  } else if (props.selectedNode === "Release") {
     details = <NodeRelease />
   }
-  return <Card>
+  return <Card style={{clear: "both"}}>
           <CardContent>
             <Typography color="textSecondary" gutterBottom>
               {props.selectedNode}

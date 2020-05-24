@@ -4,4 +4,6 @@ h1, p {
 
 .graph-container {
   height: 220px;
+  margin-top: 10px;
+  float: left;
 }

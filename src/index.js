@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 
-import { createStyles, makeStyles, Theme, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -10,10 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import Graph from './component/Graph';
-import NodeDetails from './nodes/NodeDetails';
-import WorkflowDetails from './WorkflowDetails';
-import './style.css';
+import WorkflowForm from './WorkflowForm';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -23,7 +20,7 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
-export default function FusionNavbar() {
+function FusionNavbar() {
   const classes = useStyles();
 
   // TODO(peleyal): Use grid here.
@@ -43,38 +40,22 @@ export default function FusionNavbar() {
   );
 }
 
-const theme = createMuiTheme({
-  palette: {
-    primary: purple,
-  },
-  status: {
-    danger: 'orange',
-  },
-});
+function App() {
+  const theme = createMuiTheme({
+    palette: {
+      primary: purple,
+    },
+    status: {
+      danger: 'orange',
+    },
+  });
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.onGraphSelectionChanged = this.onGraphSelectionChanged.bind(this);
-    this.state = {
-      selectedNode: null
-    }
-  }
-  onGraphSelectionChanged(node) {
-    this.setState({ selectedNode: node });
-  }
-  render() {
-    return (
-      <MuiThemeProvider theme={theme}>
-        <FusionNavbar />
-        <div className="graph-container">
-          <Graph onSelectionChanged={this.onGraphSelectionChanged}/>
-        </div>
-        <WorkflowDetails />
-        <NodeDetails selectedNode={this.state.selectedNode} />
-      </MuiThemeProvider>
-    );
-  }
+  return (
+    <MuiThemeProvider theme={theme}>
+      <FusionNavbar />
+      <WorkflowForm />
+    </MuiThemeProvider>
+  );
 }
 
 render(<App />, document.getElementById('root'));

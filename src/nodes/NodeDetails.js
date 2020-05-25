@@ -24,7 +24,7 @@ export default function NodeDetails(props) {
             <Typography color="textSecondary" gutterBottom>
               {props.selectedNode}
             </Typography>
-            <Typography>{details}</Typography>
+            {details}
           </CardContent>
         </Card>
 }

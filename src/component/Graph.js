@@ -77,11 +77,11 @@ export default class Graph extends Component {
     mxEvent.disableContextMenu(container);
 		graph.popupMenuHandler.factoryMethod = function(menu, cell, evt) {
 			return createPopupMenu(graph, menu, cell, evt);
-		};
-
-
+    };
+    
     graph.getSelectionModel().addListener(mxEvent.CHANGE, this.selectionChange);
     graph.setConnectable(true);
+    graph.setPanning(true);
 
     // Palette
     // TODO(peleyal): Maybe we should create a mxToolbar, as suggested in:

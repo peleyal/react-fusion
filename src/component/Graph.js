@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+
 import './Graph.css';
-import {
-  mxCodec,
-  mxConnectionHandler,
-  mxClient,
-  mxEvent,
-  mxImage,
-  mxGraph,
-  mxUtils,
-} from "mxgraph-js";
+import { mxCodec, mxConnectionHandler, mxClient, mxEvent, mxImage, mxGraph, mxUtils, mxGraphModel, mxGeometry } from "mxgraph-js";
 
 var paletteNodes = [
   {"text": "ETL",         "type": "etl",        "fillColor": "lightcoral",},
@@ -17,8 +11,28 @@ var paletteNodes = [
   {"text": "Release",     "type": "release",    "fillColor": "lightgreen",},
 ];
 
-// TODO(peleyal): Log the graph from XML:
-// https://github.com/jgraph/mxgraph/blob/e407026f5db3d40d3e39b3396dbed1b03e6f9608/javascript/examples/grapheditor/www/js/Editor.js#L469
+// TODO(peleyal): Get it from the frontend.
+var sampleModel = `<mxGraphModel>
+                    <root>
+                      <mxCell id="0"/>
+                      <mxCell id="1" parent="0"/>
+                      <mxCell id="2" value="ETL" style="fillColor=lightcoral" vertex="1" parent="1">
+                        <mxGeometry x="20" y="20" width="80" height="30" as="geometry"/>
+                      </mxCell>
+                      <mxCell id="3" value="Validation" style="fillColor=lightseagreen" vertex="1" parent="1">
+                        <mxGeometry x="150" y="20" width="80" height="30" as="geometry"/>
+                      </mxCell>
+                      <mxCell id="4" value="Release" style="fillColor=lightgreen" vertex="1" parent="1">
+                        <mxGeometry x="280" y="20" width="80" height="30" as="geometry"/>
+                      </mxCell>
+                      <mxCell id="5" value="" edge="1" parent="1" source="2" target="3">
+                        <mxGeometry relative="1" as="geometry"/>
+                      </mxCell>
+                      <mxCell id="6" value="" edge="1" parent="1" source="3" target="4">
+                        <mxGeometry relative="1" as="geometry"/>
+                      </mxCell>
+                    </root>
+                  </mxGraphModel>`;
 
 function getNodeColor(nodeType) {
   return paletteNodes.find(n => n.type === nodeType).fillColor;
@@ -28,8 +42,8 @@ function createPopupMenu(graph, menu, cell, evt) {
   if (cell == null) {
     menu.addItem('Print', null, function() { 
       var encoder = new mxCodec();
-      var node = encoder.encode(graph.getModel());
-      console.log(mxUtils.getPrettyXml(node), true);
+      var model = encoder.encode(graph.getModel());
+      console.log(mxUtils.getXml(model));
     });
     menu.addItem('Zoom In', null, () => graph.zoomIn());
     menu.addItem('Zoom Out', null, () => graph.zoomOut());
@@ -42,7 +56,7 @@ function createPopupMenu(graph, menu, cell, evt) {
   }
 }
 
-export default class Graph extends Component {
+class Graph extends Component {
   constructor(props) {
     super(props);
     // this.state = {} ?
@@ -57,7 +71,9 @@ export default class Graph extends Component {
   selectionChange() {
     // TODO(peleyal): We need to support more than one node from a single "type".
     let cell = this.graph.getSelectionCell();
-    this.props.onSelectionChanged(cell ? cell.value : null);
+    if (this.props.onSelectionChanged) {
+      this.props.onSelectionChanged(cell ? cell.value : null);
+    }
   }
 
   initGraph() {
@@ -94,6 +110,7 @@ export default class Graph extends Component {
       const dataText = node.getAttribute("data-text");
       // TODO(peleyal): Use data-type, and pass it to the Graph's owner, as we can edit
       // the vertex text.
+      // https://jgraph.github.io/mxgraph/docs/js-api/files/model/mxCell-js.html
       let vertex = graph.insertVertex(
         graph.getDefaultParent(), cell, dataText, x, y, 80, 30,  
           "fillColor=" + getNodeColor(dataType));
@@ -107,8 +124,28 @@ export default class Graph extends Component {
         (graph, evt, target, x, y) =>
           dropEnd(graph, evt, target, x, y, element));
     }
-    
-    var parent = graph.getDefaultParent();
+
+    graph.getModel().addListener(mxEvent.CHANGE, (sender, evt) => {
+      console.log(evt);
+      // TODO(peleyal): The graph was updated, we need to update the state!
+      /*
+      var encoder = new mxCodec();
+      var model = encoder.encode(graph.getModel());
+      console.log(mxUtils.getXml(model));
+      */
+    });
+
+    // These are required to be able to load the model from XML, see 
+    // https://github.com/jgraph/mxgraph/issues/301#issuecomment-514284868
+    // for more details.
+    window['mxGraphModel'] = mxGraphModel;
+    window['mxGeometry'] = mxGeometry;
+
+    var doc = mxUtils.parseXml(sampleModel);
+    var codec = new mxCodec(doc);
+    codec.decode(doc.documentElement, graph.getModel());
+
+    /*var parent = graph.getDefaultParent();
     graph.getModel().beginUpdate();
     try {
       // Insert the nodes.
@@ -125,7 +162,7 @@ export default class Graph extends Component {
     }
     finally {
         graph.getModel().endUpdate();
-    }
+    }*/
 
     this.graph = graph;
   }
@@ -151,3 +188,10 @@ export default class Graph extends Component {
     );
   }
 }
+
+Graph.propTypes = {
+ onSelectionChanged: PropTypes.func,
+};
+
+
+export default Graph;

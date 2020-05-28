@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
 
 import { createStyles, makeStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
@@ -40,6 +40,27 @@ function FusionNavbar() {
   );
 }
 
+class CallApi extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {apiResponse: ""};
+  }
+
+  callApi() {
+    fetch("http://localhost:9000/workflows")
+      .then(res => res.text())
+      .then(text => this.setState({apiResponse: text}));
+  }
+
+  componentWillMount() {
+    this.callApi();
+  }
+
+  render() {
+    return <div>API Response: {this.state.apiResponse}</div>;
+  }
+}
+
 function App() {
   const theme = createMuiTheme({
     palette: {
@@ -54,6 +75,7 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <FusionNavbar />
       <WorkflowForm />
+      <CallApi />
     </MuiThemeProvider>
   );
 }

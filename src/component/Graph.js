@@ -66,7 +66,6 @@ class Graph extends Component {
     }
 
     mxConnectionHandler.prototype.connectImage = new mxImage('images/icons8-down-arrow.png', 20, 30);
-    mxConnectionHandler.prototype.connectIconOffset = new mxPoint(15,15);
 
     // Creates the graph inside the given container.
     var graph = new mxGraph(container);

@@ -65,7 +65,8 @@ class Graph extends Component {
       return;
     }
 
-    mxConnectionHandler.prototype.connectImage = new mxImage('images/icons8-down-arrow.png', 10, 30);
+    mxConnectionHandler.prototype.connectImage = new mxImage('images/icons8-down-arrow.png', 20, 30);
+    mxConnectionHandler.prototype.connectIconOffset = new mxPoint(15,15);
 
     // Creates the graph inside the given container.
     var graph = new mxGraph(container);
@@ -84,17 +85,25 @@ class Graph extends Component {
       if (added && added.length > 0) {
         // ACT as removed
         let removedCell = added[0];
-        if (removedCell.isVertex()) {
-          graph.removeCellOverlays(removedCell);
-        }
+        graph.removeCellOverlays(removedCell);
       }
       var removed = evt.getProperty('removed');
       if (removed && removed.length > 0) {
         // ACT as added
         let addedCell = removed[0];
         if (addedCell.isVertex()) {
-          // TODO(peleyal): Don't add delete for root.
-          this.addOverlays(graph, addedCell, true);
+          this.addOverlays(graph, addedCell, !addedCell.getAttribute('root'));
+        } else {
+          var overlay = new mxCellOverlay(new mxImage('images/icons8-remove.png', 24, 24), 'Delete');
+          overlay.offset = new mxPoint(10,0);
+          overlay.cursor = 'hand';
+          overlay.align = mxConstants.ALIGN_RIGHT;
+          overlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function(sender, evt) {
+            let sourceId = addedCell.source.getAttribute('id');
+            let targetId = addedCell.target.getAttribute('id');
+            this.props.onDeleteEdge(sourceId, targetId);
+          }));
+          graph.addCellOverlay(addedCell, overlay);
         }
       }
       // TODO(peleyal): Maybe change overlays based on selection?
@@ -246,19 +255,14 @@ class Graph extends Component {
         metadata.setAttribute('id', node.id);
         let vertex;
         if (nodeNameToVertex.size == 0) {
+          metadata.setAttribute('root', true);
           // Root node, the following is good when choosing a tree representation
           var w = graph.container.offsetWidth;
-          vertex = graph.insertVertex(parent, 'treeRoot',
+          vertex = graph.insertVertex(parent, null,
             metadata, w/2 - 80, 20, 160, 60, "fillColor=" + getNodeColor(node.type));
-          graph.updateCellSize(vertex);
-          //this.addOverlays(graph, vertex, false);
-          /*vertex = this.graph.insertVertex(parent, null,
-            metadata, 0, 0, 0, 0, "fillColor=" + getNodeColor(node.type))
-          this.addOverlays(graph, vertex, false);*/
         } else {
           vertex = this.graph.insertVertex(parent, null,
             metadata, 0, 0, 0, 0, "fillColor=" + getNodeColor(node.type))
-          //this.addOverlays(graph, vertex, true);
         }
         nodeNameToVertex.set(node.name, vertex);
         if (sourceNodeNameToTargetNode.has(node.name)) {
@@ -274,16 +278,7 @@ class Graph extends Component {
             continue;
           }
 
-          graph.insertEdge(parent, null, '', nodeNameToVertex.get(dependency), vertex)
-          /*var edge = graph.insertEdge(parent, null, '', nodeNameToVertex.get(dependency), vertex);
-          var overlay = new mxCellOverlay(new mxImage('images/icons8-remove.png', 24, 24), 'Delete');
-          overlay.offset = new mxPoint(15,15);
-          overlay.cursor = 'hand';
-          overlay.align = mxConstants.ALIGN_RIGHT;
-          overlay.addListener(mxEvent.CLICK, mxUtils.bind(this, function(sender, evt) {
-            //this.props.onCreateChildNode();
-          }));
-          graph.addCellOverlay(edge, overlay);*/
+          graph.insertEdge(parent, null, '', nodeNameToVertex.get(dependency), vertex);
         }
 
         var geometry = this.graph.getModel().getGeometry(vertex);

@@ -61,6 +61,8 @@ class CallApi extends React.Component {
   }
 }
 
+// TODO(peleyal): Add link to https://icons8.com/license.
+// Or maybe can we use? https://material-ui.com/components/material-icons/
 function App() {
   const theme = createMuiTheme({
     palette: {

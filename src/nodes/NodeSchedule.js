@@ -9,12 +9,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
 
-export default function NodeDetails(props) {
-  return <Card>
-          <CardContent>
-            <Typography gutterBottom>
-              Workflow details
-            </Typography>
+export default function NodeSchedule(props) {
+  return <div>
             <FormGroup>
               <FormGroup row>
                 <FormControlLabel control={<Checkbox name="pubsub" color="primary" />} label="Pubsub" />
@@ -27,7 +23,6 @@ export default function NodeDetails(props) {
                 <TextField label="* * * * *" />
               </FormGroup>
             </FormGroup>
-          </CardContent>
-        </Card>
+          </div>
 }
 

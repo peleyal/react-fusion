@@ -24,6 +24,7 @@ class WorkflowForm extends Component {
     this.onGraphSelectionChanged = this.onGraphSelectionChanged.bind(this);
     this.onGraphCreateChildNode = this.onGraphCreateChildNode.bind(this);
     this.onGraphDeleteNode = this.onGraphDeleteNode.bind(this);
+    this.onGraphDeleteEdge = this.onGraphDeleteEdge.bind(this);
     this.onGraphInsertEdge = this.onGraphInsertEdge.bind(this);
     this.onNodeTypeChange = this.onNodeTypeChange.bind(this);
     
@@ -110,6 +111,24 @@ class WorkflowForm extends Component {
     this.setState({ model: model });
   }
 
+  onGraphDeleteEdge(sourceId, targetId) {
+    let model = JSON.parse(JSON.stringify(this.state.model));
+    let targetNode;
+    let sourceName;
+    for (let node of model.nodes) {
+      if (node.id === sourceId) {
+        sourceName = node.name;
+      } else if (node.id === targetId) {
+        targetNode = node;
+      }
+    }
+    let index = targetNode.dependencies.indexOf(sourceName);
+    if (index != -1) {
+      targetNode.dependencies.splice(index, 1);
+      this.setState({ model: model });
+    }
+  }
+
   onGraphCreateChildNode(nodeId) {
     let model = JSON.parse(JSON.stringify(this.state.model));
     // Set valid id.
@@ -131,21 +150,41 @@ class WorkflowForm extends Component {
       });
     this.setState({ model: model });
   }
+
   onGraphInsertEdge(sourceNodeId, targetNodeId) {
-    //alert(JSON.stringify(this.state.model));
     let model = JSON.parse(JSON.stringify(this.state.model));
     let targetNode;
-    let sourceName;
-    // TODO(peleyal): Add validation.
+    let sourceNode;
     for (let node of model.nodes) {
       if (node.id === sourceNodeId) {
-        sourceName = node.name;
+        sourceNode = node;
       } else if (node.id === targetNodeId) {
         targetNode = node;
       }
     }
-    targetNode.dependencies.push(sourceName);
+    if (targetNode.dependencies.indexOf(sourceNode.name) != -1) {
+      alert("Edge already exists");
+      return;
+    } else if (this.isAncestorNode(sourceNode, targetNode)) {
+      alert("Unable to create edge, a cycle would be introduced to the graph");
+      return;
+    }
+    targetNode.dependencies.push(sourceNode.name);
     this.setState({ model: model });
+  }
+
+  // Check if source is an ancestor of target
+  isAncestorNode(source, target) {
+    if (source.dependencies.indexOf(target.name) != -1) {
+      return true;
+    }
+    for (let dep of source.dependencies) {
+      let nodes = this.state.model.nodes.filter(n => n.name === dep);
+      for (let node of nodes) {
+        if (this.isAncestorNode(node, target)) return true;
+      }
+    }
+    return false;
   }
 
   render() {
@@ -157,7 +196,8 @@ class WorkflowForm extends Component {
                     onSelectionChanged={this.onGraphSelectionChanged}
                     onCreateChildNode={this.onGraphCreateChildNode}
                     onDeleteNode={this.onGraphDeleteNode}
-                    onInsertEdge={this.onGraphInsertEdge} />
+                    onInsertEdge={this.onGraphInsertEdge}
+                    onDeleteEdge={this.onGraphDeleteEdge} />
             </div>
             <NodeDetails node={this.state.selectedNode} onNodeTypeChange={this.onNodeTypeChange} />    
         </div>

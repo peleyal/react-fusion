@@ -17,14 +17,14 @@ jobs:
     name: Push Fusion Workflows to Airflow
     runs-on: ubuntu-latest
     steps:
-    - name: Set Tag Env (for dev)
+    - name: Set Dev Env
       if: github.event_name == 'pull_request' || github.event_name == 'push'
-      run: echo "ENVIRONMENT=dev" >> $GITHUB_ENV
-    - name: Set Tag Env (for pre-release)
+      run: echo "ENVIRONMENT=dev"
+    - name: Set Preprod Env
       if: github.event_name == 'release' && github.event.release.prerelease
-      run: echo "ENVIRONMENT=preprod" >> $GITHUB_ENV
-    - name: Set Tag Env (for release)
+      run: echo "ENVIRONMENT=preprod"
+    - name: Set Prod Env (for release)
       if: github.event_name == 'release' && !github.event.release.prerelease
-      run: echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+      run: echo "ENVIRONMENT=prod"
     - name: Push to airflow with Actuator
       run: echo "$ENVIRONMENT"

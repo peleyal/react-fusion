@@ -1,0 +1,30 @@
+name: CHECK
+
+on:
+  pull_request:
+    paths:
+    - '**'
+  push:
+    paths:
+    - '**'
+    branches:
+    - master
+  release:
+    types: [prereleased, released]
+
+jobs:
+  push-workflows-to-airflow:
+    name: Push Fusion Workflows to Airflow
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set Tag Env (for dev)
+      if: github.event_name == 'pull_request' || github.event_name == 'push'
+      run: echo "ENVIRONMENT=dev" >> $GITHUB_ENV
+    - name: Set Tag Env (for pre-release)
+      if: github.event_name == 'release' && github.event.release.prerelease
+      run: echo "ENVIRONMENT=preprod" >> $GITHUB_ENV
+    - name: Set Tag Env (for release)
+      if: github.event_name == 'release' && !github.event.release.prerelease
+      run: echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+    - name: Push to airflow with Actuator
+      run: echo "$ENVIRONMENT"

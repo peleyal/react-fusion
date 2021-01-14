@@ -19,7 +19,7 @@ jobs:
     steps:
     - name: Print release name
       if: github.event_name == 'release'
-      run: echo "${{ github.event.release }} >> $GITHUB_ENV
+      run: echo "${{ github.event.release }}" >> $GITHUB_ENV
     - name: Set Tag Env (for dev)
       if: github.event_name == 'pull_request' || github.event_name == 'push'
       run: echo "ENVIRONMENT=dev" >> $GITHUB_ENV

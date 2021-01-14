@@ -18,8 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Print release name
-      if: github.event_name == 'release'
-      run: echo "${{ github.event.release }}" >> $GITHUB_ENV
+      if: github.event_name == 'release' && contains(github.event.release, 'prod_test')
+      run: echo "PROD_TEST"
+    - name: Print release name 2
+      if: github.event_name == 'release' && contains(github.event.release, 'prod')
+      run: echo "PROD"
     - name: Set Tag Env (for dev)
       if: github.event_name == 'pull_request' || github.event_name == 'push'
       run: echo "ENVIRONMENT=dev" >> $GITHUB_ENV

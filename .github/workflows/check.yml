@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Print release name
-      if: github.event_name == 'release' && contains(github.event.release, 'prod_test')
+      if: github.event_name == 'release' && contains(github.event.release.name, 'prod_test')
       run: echo "PROD_TEST"
     - name: Print release name 2
       if: github.event_name == 'release' && contains(github.event.release, 'prod')
